@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<업데이트 소식>
 <html lang="ko">
 <head>
 <meta charset="utf-8" />
