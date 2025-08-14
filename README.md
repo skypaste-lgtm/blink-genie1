@@ -28,20 +28,11 @@
     line-height: 1.3;
     font-weight: 700;
     word-break: keep-all;
-    transition: transform 0.3s ease;
   }
   /* 깜박임 효과 */
   .blink { animation: blink 1s step-start infinite; }
   @keyframes blink { 50% { visibility: hidden; } }
-  /* 확대 효과 */
-  .zoom {
-    transform: scale(2);
-  }
-  /* 사라지기 */
-  .hide {
-    opacity: 0;
-    transition: opacity 0.5s ease;
-  }
+
   .meta { margin-top: 12px; font-size: 12px; color: #999; }
   .error { color: #b00020; font-weight: 600; }
 </style>
@@ -54,10 +45,14 @@
   </div>
 
 <script>
-const SHEET_ID   = "16_aHITP-iPWE57OWnv85gw60qTN6Rhfo-41G1_rQpT0"; 
-const SHEET_NAME = "시트1";      
+/* ========================= 설정 =========================
+ * 시트 공개: "링크가 있는 모든 사용자(보기)"로 설정
+ * SHEET_NAME은 시트 탭 이름을 정확히 입력
+ */
+const SHEET_ID   = "16_aHITP-iPWE57OWnv85gw60qTN6Rhfo-41G1_rQpT0"; // 주신 시트 ID
+const SHEET_NAME = "시트1";      // <-- 여기를 실제 탭 이름으로 바꾸세요
 const RANGE      = "A1:B2";
-const REFRESH_MS = 5000;         
+const REFRESH_MS = 5000;         // 5초마다 재조회
 
 const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${encodeURIComponent(SHEET_ID)}/gviz/tq?` +
                  `tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}&range=${encodeURIComponent(RANGE)}`;
@@ -96,9 +91,19 @@ async function loadOnce() {
     const raw = await res.text();
     const json = parseGviz(raw);
     applyData(json.table.rows);
+  } catch (err) {
+    console.error(err);
+    $text.textContent = "데이터를 불러오지 못했습니다";
+    $text.classList.remove("blink");
+    $text.classList.add("error");
+    $meta.textContent = `${new Date().toLocaleString()}`;
+  }
+}
 
-    // 깜박이기 및 확대 후 사라지기
-    // 1. 깜박이기 (기본)
-    $text.classList.add("blink");
-
-    // 2. 확대 효과
+loadOnce();
+if (typeof REFRESH_MS === "number" && REFRESH_MS > 0) {
+  setInterval(loadOnce, REFRESH_MS);
+}
+</script>
+</body>
+</html>
