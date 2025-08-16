@@ -1,4 +1,4 @@
-<업데이트 소식>
+<업그레이드안내 html>
 <html lang="ko">
 <head>
 <meta charset="utf-8" />
@@ -45,14 +45,10 @@
   </div>
 
 <script>
-/* ========================= 설정 =========================
- * 시트 공개: "링크가 있는 모든 사용자(보기)"로 설정
- * SHEET_NAME은 시트 탭 이름을 정확히 입력
- */
-const SHEET_ID   = "16_aHITP-iPWE57OWnv85gw60qTN6Rhfo-41G1_rQpT0"; // 주신 시트 ID
-const SHEET_NAME = "시트1";      // <-- 여기를 실제 탭 이름으로 바꾸세요
-const RANGE      = "A1:B2";
-const REFRESH_MS = 5000;         // 5초마다 재조회
+const SHEET_ID   = "16_aHITP-iPWE57OWnv85gw60qTN6Rhfo-41G1_rQpT0";
+const SHEET_NAME = "시트1";
+const RANGE      = "A1:B3"; // B3까지 포함
+const REFRESH_MS = 5000;
 
 const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${encodeURIComponent(SHEET_ID)}/gviz/tq?` +
                  `tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}&range=${encodeURIComponent(RANGE)}`;
@@ -68,19 +64,39 @@ function parseGviz(text) {
 }
 
 function applyData(rows) {
-  const A1 = rows?.[0]?.c?.[0]?.v ?? null;
+  const A1 = String(rows?.[0]?.c?.[0]?.v ?? ""); // A1 값 문자열
   const B1 = rows?.[0]?.c?.[1]?.v ?? "";
   const B2 = rows?.[1]?.c?.[1]?.v ?? "";
+  const B3 = rows?.[2]?.c?.[1]?.v ?? "";
 
-  let message;
-  if (A1 === 1 || A1 === "1") {
-    message = B1;
-  } else {
-    message = B2;
+  if (A1.length < 2) {
+    $text.textContent = "(A1 값 형식 오류)";
+    return;
   }
 
+  // 첫 번째 숫자 → 색상
+  const colorCode = A1.charAt(0);
+  let color;
+  if (colorCode === "1") color = "red";
+  else if (colorCode === "2") color = "blue";
+  else if (colorCode === "3") color = "black";
+  else color = "black";
+
+  // 두 번째 숫자 → 표시할 셀
+  const textCode = A1.charAt(1);
+  let message;
+  if (textCode === "1") message = B1;
+  else if (textCode === "2") message = B2;
+  else if (textCode === "3") message = B3;
+  else message = "";
+
+  // / → 줄바꿈
+  message = message.replace(/\//g, "\n");
+
+  // 표시
+  $text.style.color = color;
   $text.textContent = message || "(표시할 문구가 없습니다)";
-  $meta.textContent = `A1=${A1 ?? "N/A"} · ${new Date().toLocaleString()}`;
+  $meta.textContent = `A1=${A1} · ${new Date().toLocaleString()}`;
 }
 
 async function loadOnce() {
@@ -101,9 +117,10 @@ async function loadOnce() {
 }
 
 loadOnce();
-if (typeof REFRESH_MS === "number" && REFRESH_MS > 0) {
-  setInterval(loadOnce, REFRESH_MS);
-}
+if (REFRESH_MS > 0) setInterval(loadOnce, REFRESH_MS);
+</script>
+</body>
+</html>
 </script>
 </body>
 </html>
