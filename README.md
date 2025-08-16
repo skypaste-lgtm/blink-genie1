@@ -1,4 +1,4 @@
-<업그레이드안내 html>
+<업그레이드안내>
 <html lang="ko">
 <head>
 <meta charset="utf-8" />
@@ -28,6 +28,7 @@
     line-height: 1.3;
     font-weight: 700;
     word-break: keep-all;
+    white-space: pre-line; /* 줄바꿈 적용 */
   }
   /* 깜박임 효과 */
   .blink { animation: blink 1s step-start infinite; }
@@ -45,10 +46,10 @@
   </div>
 
 <script>
-const SHEET_ID   = "16_aHITP-iPWE57OWnv85gw60qTN6Rhfo-41G1_rQpT0";
-const SHEET_NAME = "시트1";
+const SHEET_ID   = "16_aHITP-iPWE57OWnv85gw60qTN6Rhfo-41G1_rQpT0"; // 시트 ID
+const SHEET_NAME = "시트1"; // 시트 탭 이름
 const RANGE      = "A1:B3"; // B3까지 포함
-const REFRESH_MS = 5000;
+const REFRESH_MS = 5000;    // 5초마다 새로고침
 
 const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${encodeURIComponent(SHEET_ID)}/gviz/tq?` +
                  `tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}&range=${encodeURIComponent(RANGE)}`;
@@ -80,6 +81,8 @@ function applyData(rows) {
   if (colorCode === "1") color = "red";
   else if (colorCode === "2") color = "blue";
   else if (colorCode === "3") color = "black";
+  else if (colorCode === "4") color = "green";
+  else if (colorCode === "5") color = "purple";
   else color = "black";
 
   // 두 번째 숫자 → 표시할 셀
@@ -118,9 +121,6 @@ async function loadOnce() {
 
 loadOnce();
 if (REFRESH_MS > 0) setInterval(loadOnce, REFRESH_MS);
-</script>
-</body>
-</html>
 </script>
 </body>
 </html>
